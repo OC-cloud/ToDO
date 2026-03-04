@@ -386,172 +386,158 @@ export default function App() {
       </header>
 
       <AnimatePresence mode="wait">
-      {activeView === 'profile' && (
         <motion.main
-          key="profile"
+          key={activeView}
           initial={{ y: 10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -10, opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex-1 overflow-y-auto p-8"
+          className={activeView === 'dashboard' ? 'flex-1 flex overflow-hidden' : 'flex-1 overflow-y-auto p-8'}
         >
-          <div className="max-w-4xl mx-auto space-y-6">
-            <section className="bg-white rounded-2xl border border-black/5 p-6">
-              <h2 className="text-2xl font-bold mb-4">Profile</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-gray-50 rounded-xl p-4"><p className="text-gray-500 text-sm">Username</p><p className="font-semibold">{user.username}</p></div>
-                <div className="bg-gray-50 rounded-xl p-4"><p className="text-gray-500 text-sm">Email</p><p className="font-semibold">{user.email}</p></div>
-              </div>
-            </section>
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-white rounded-2xl border border-black/5 p-5"><p className="text-xs text-gray-400 uppercase font-bold">Total Tasks</p><p className="text-3xl font-bold">{tasks.length}</p></div>
-              <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-5"><p className="text-xs text-emerald-700 uppercase font-bold">Completed</p><p className="text-3xl font-bold text-emerald-800">{completed}</p></div>
-              <div className="bg-amber-50 rounded-2xl border border-amber-200 p-5"><p className="text-xs text-amber-700 uppercase font-bold">Pending</p><p className="text-3xl font-bold text-amber-800">{tasks.length - completed}</p></div>
-            </section>
-          </div>
-        </motion.main>
-      )}
-
-      {activeView === 'settings' && (
-        <motion.main
-          key="settings"
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -10, opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="flex-1 overflow-y-auto p-8"
-        >
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-black/5 p-6">
-            <h2 className="text-2xl font-bold mb-1">Settings</h2>
-            <p className="text-sm text-gray-500 mb-6">Choose a theme for your dashboard.</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(Object.keys(themes) as ThemeName[]).map((name) => (
-                <button key={name} onClick={() => changeThemeForCurrentUser(name)} className={cn('text-left rounded-2xl border p-4', theme === name ? 'border-black shadow-md' : 'border-black/10 hover:border-black/30')}>
-                  <div className="flex items-center justify-between mb-2"><h3 className="font-bold">{themes[name].label}</h3>{theme === name && <span className="text-xs font-bold">Active</span>}</div>
-                  <div className={cn('rounded-xl p-3 border border-black/10', themes[name].appBg)}>
-                    <div className={cn('h-3 w-20 rounded mb-2', themes[name].logo)} />
-                    <div className={cn('h-7 w-24 rounded', themes[name].primary)} />
-                  </div>
-                </button>
-              ))}
-            </div>
-            {settingsError && (
-              <p className="mt-4 text-sm font-medium text-red-600">{settingsError}</p>
-            )}
-            <div className="mt-8 border-t border-red-200 pt-6">
-              <h3 className="text-lg font-bold text-red-700">Danger Zone</h3>
-              <p className="mt-1 text-sm text-gray-500">Delete your account and all related data permanently.</p>
-              <button
-                onClick={deleteCurrentAccount}
-                disabled={deletingAccount}
-                className="mt-4 inline-flex items-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {deletingAccount ? 'Deleting Account...' : 'Delete This Account'}
-              </button>
-            </div>
-          </div>
-        </motion.main>
-      )}
-
-      {activeView === 'dashboard' && (
-        <motion.main
-          key="dashboard"
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -10, opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="flex-1 flex overflow-hidden"
-        >
-          <section className="flex-1 overflow-y-auto p-8 border-r border-black/5">
-            <div className="max-w-4xl mx-auto">
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-2xl font-bold">Task Feed</h2>
-                <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full border border-black/5">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}</span>
-              </div>
-              <form onSubmit={createTask} className="bg-white p-6 rounded-2xl border border-black/5 mb-8">
+          {activeView === 'profile' && (
+            <div className="max-w-4xl mx-auto space-y-6">
+              <section className="bg-white rounded-2xl border border-black/5 p-6">
+                <h2 className="text-2xl font-bold mb-4">Profile</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input type="text" placeholder="What needs to be done?" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} className="md:col-span-2 w-full px-4 py-2 text-lg border-none outline-none" required />
-                  <textarea placeholder="Add a description..." value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} className="md:col-span-2 w-full px-4 py-2 border-none outline-none resize-none text-gray-600" rows={2} />
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl"><Calendar className="w-4 h-4 text-gray-400" /><input type="date" value={newTask.dueDate} onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })} className="bg-transparent border-none outline-none text-sm text-gray-600" /></div>
-                  <div className="flex justify-end"><button type="submit" className={cn('text-white px-6 py-2 rounded-xl font-semibold flex items-center gap-2', t.primary, t.primaryHover)}><Plus className="w-4 h-4" />Create Task</button></div>
+                  <div className="bg-gray-50 rounded-xl p-4"><p className="text-gray-500 text-sm">Username</p><p className="font-semibold">{user.username}</p></div>
+                  <div className="bg-gray-50 rounded-xl p-4"><p className="text-gray-500 text-sm">Email</p><p className="font-semibold">{user.email}</p></div>
                 </div>
-              </form>
-              <div className="space-y-8">
-                <section>
-                  <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-gray-900">My Tasks</h3>
-                    <span className="text-xs font-semibold text-gray-500 bg-white px-2.5 py-1 rounded-full border border-black/10">
-                      {myTasks.length}
-                    </span>
-                  </div>
-                  {myTasks.length === 0 ? (
-                    <p className="text-sm text-gray-500 bg-white border border-black/5 rounded-xl px-4 py-3">
-                      You do not have any tasks yet.
-                    </p>
-                  ) : (
-                    <div className="space-y-6">
-                      <AnimatePresence mode="popLayout">
-                        {myTasks.map(renderTaskCard)}
-                      </AnimatePresence>
-                    </div>
-                  )}
-                </section>
-
-                <section>
-                  <div className="mb-4 flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-gray-900">Other Users Tasks</h3>
-                    <span className="text-xs font-semibold text-gray-500 bg-white px-2.5 py-1 rounded-full border border-black/10">
-                      {otherUserTasks.length}
-                    </span>
-                  </div>
-                  {otherUserTasks.length === 0 ? (
-                    <p className="text-sm text-gray-500 bg-white border border-black/5 rounded-xl px-4 py-3">
-                      No tasks from other users.
-                    </p>
-                  ) : (
-                    <div className="space-y-6">
-                      <AnimatePresence mode="popLayout">
-                        {otherUserTasks.map(renderTaskCard)}
-                      </AnimatePresence>
-                    </div>
-                  )}
-                </section>
-              </div>
+              </section>
+              <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="bg-white rounded-2xl border border-black/5 p-5"><p className="text-xs text-gray-400 uppercase font-bold">Total Tasks</p><p className="text-3xl font-bold">{tasks.length}</p></div>
+                <div className="bg-emerald-50 rounded-2xl border border-emerald-200 p-5"><p className="text-xs text-emerald-700 uppercase font-bold">Completed</p><p className="text-3xl font-bold text-emerald-800">{completed}</p></div>
+                <div className="bg-amber-50 rounded-2xl border border-amber-200 p-5"><p className="text-xs text-amber-700 uppercase font-bold">Pending</p><p className="text-3xl font-bold text-amber-800">{tasks.length - completed}</p></div>
+              </section>
             </div>
-          </section>
+          )}
 
-          <aside className="w-80 bg-white border-l border-black/5 flex flex-col">
-            <div className="p-4 border-b border-black/5">
-              <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Team Members</h3>
-              <div className="flex flex-wrap gap-2">
-                {allUsers.map((u) => (
-                  <div key={u.id || u._id} className="relative" title={`${u.username} is ${u.onlineStatus ? 'Online' : 'Offline'}`}>
-                    <div className={cn('w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2', u.onlineStatus ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-50 text-gray-400')}>{(u.username || '?').charAt(0).toUpperCase()}</div>
-                    {u.onlineStatus && <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />}
-                  </div>
+          {activeView === 'settings' && (
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-black/5 p-6">
+              <h2 className="text-2xl font-bold mb-1">Settings</h2>
+              <p className="text-sm text-gray-500 mb-6">Choose a theme for your dashboard.</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {(Object.keys(themes) as ThemeName[]).map((name) => (
+                  <button key={name} onClick={() => changeThemeForCurrentUser(name)} className={cn('text-left rounded-2xl border p-4', theme === name ? 'border-black shadow-md' : 'border-black/10 hover:border-black/30')}>
+                    <div className="flex items-center justify-between mb-2"><h3 className="font-bold">{themes[name].label}</h3>{theme === name && <span className="text-xs font-bold">Active</span>}</div>
+                    <div className={cn('rounded-xl p-3 border border-black/10', themes[name].appBg)}>
+                      <div className={cn('h-3 w-20 rounded mb-2', themes[name].logo)} />
+                      <div className={cn('h-7 w-24 rounded', themes[name].primary)} />
+                    </div>
+                  </button>
                 ))}
               </div>
-            </div>
-            <div className="p-4 border-b border-black/5 flex items-center gap-2 bg-gray-50/50"><MessageSquare className="w-5 h-5 text-gray-400" /><h2 className="font-bold">Team Chat</h2></div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((m, i) => (
-                <div key={m._id || i} className={cn('flex flex-col', m.senderId === user.id ? 'items-end' : 'items-start')}>
-                  <div className="flex items-center gap-2 mb-1 px-1"><span className="text-[10px] font-bold text-gray-500 uppercase">{m.senderName}</span><span className="text-[10px] text-gray-300 flex items-center gap-1"><Clock className="w-2.5 h-2.5" />{format(new Date(m.timestamp), 'HH:mm')}</span></div>
-                  <div className={cn('px-4 py-2.5 rounded-2xl text-sm max-w-[90%]', m.senderId === user.id ? `${t.primary} text-white rounded-tr-none` : 'bg-gray-100 text-gray-800 rounded-tl-none border border-black/5')}>{m.message}</div>
-                </div>
-              ))}
-              <div ref={chatEndRef} />
-            </div>
-            <form onSubmit={sendMessage} className="p-4 border-t border-black/5 bg-gray-50">
-              <div className="relative">
-                <input type="text" placeholder="Type a message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="w-full pl-4 pr-12 py-3 bg-white rounded-xl border border-gray-200 outline-none text-sm" />
-                <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-black"><Send className="w-4 h-4" /></button>
+              {settingsError && (
+                <p className="mt-4 text-sm font-medium text-red-600">{settingsError}</p>
+              )}
+              <div className="mt-8 border-t border-red-200 pt-6">
+                <h3 className="text-lg font-bold text-red-700">Danger Zone</h3>
+                <p className="mt-1 text-sm text-gray-500">Delete your account and all related data permanently.</p>
+                <button
+                  onClick={deleteCurrentAccount}
+                  disabled={deletingAccount}
+                  className="mt-4 inline-flex items-center rounded-xl bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {deletingAccount ? 'Deleting Account...' : 'Delete This Account'}
+                </button>
               </div>
-            </form>
-          </aside>
+            </div>
+          )}
+
+          {activeView === 'dashboard' && (
+            <>
+              <section className="flex-1 overflow-y-auto p-8 border-r border-black/5">
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-2xl font-bold">Task Feed</h2>
+                    <span className="text-sm text-gray-500 bg-white px-3 py-1 rounded-full border border-black/5">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}</span>
+                  </div>
+                  <form onSubmit={createTask} className="bg-white p-6 rounded-2xl border border-black/5 mb-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <input type="text" placeholder="What needs to be done?" value={newTask.title} onChange={(e) => setNewTask({ ...newTask, title: e.target.value })} className="md:col-span-2 w-full px-4 py-2 text-lg border-none outline-none" required />
+                      <textarea placeholder="Add a description..." value={newTask.description} onChange={(e) => setNewTask({ ...newTask, description: e.target.value })} className="md:col-span-2 w-full px-4 py-2 border-none outline-none resize-none text-gray-600" rows={2} />
+                      <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-xl"><Calendar className="w-4 h-4 text-gray-400" /><input type="date" value={newTask.dueDate} onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })} className="bg-transparent border-none outline-none text-sm text-gray-600" /></div>
+                      <div className="flex justify-end"><button type="submit" className={cn('text-white px-6 py-2 rounded-xl font-semibold flex items-center gap-2', t.primary, t.primaryHover)}><Plus className="w-4 h-4" />Create Task</button></div>
+                    </div>
+                  </form>
+                  <div className="space-y-8">
+                    <section>
+                      <div className="mb-4 flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-gray-900">My Tasks</h3>
+                        <span className="text-xs font-semibold text-gray-500 bg-white px-2.5 py-1 rounded-full border border-black/10">
+                          {myTasks.length}
+                        </span>
+                      </div>
+                      {myTasks.length === 0 ? (
+                        <p className="text-sm text-gray-500 bg-white border border-black/5 rounded-xl px-4 py-3">
+                          You do not have any tasks yet.
+                        </p>
+                      ) : (
+                        <div className="space-y-6">
+                          <AnimatePresence mode="popLayout">
+                            {myTasks.map(renderTaskCard)}
+                          </AnimatePresence>
+                        </div>
+                      )}
+                    </section>
+
+                    <section>
+                      <div className="mb-4 flex items-center justify-between">
+                        <h3 className="text-lg font-bold text-gray-900">Other Users Tasks</h3>
+                        <span className="text-xs font-semibold text-gray-500 bg-white px-2.5 py-1 rounded-full border border-black/10">
+                          {otherUserTasks.length}
+                        </span>
+                      </div>
+                      {otherUserTasks.length === 0 ? (
+                        <p className="text-sm text-gray-500 bg-white border border-black/5 rounded-xl px-4 py-3">
+                          No tasks from other users.
+                        </p>
+                      ) : (
+                        <div className="space-y-6">
+                          <AnimatePresence mode="popLayout">
+                            {otherUserTasks.map(renderTaskCard)}
+                          </AnimatePresence>
+                        </div>
+                      )}
+                    </section>
+                  </div>
+                </div>
+              </section>
+
+              <aside className="w-80 bg-white border-l border-black/5 flex flex-col">
+                <div className="p-4 border-b border-black/5">
+                  <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Team Members</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {allUsers.map((u) => (
+                      <div key={u.id || u._id} className="relative" title={`${u.username} is ${u.onlineStatus ? 'Online' : 'Offline'}`}>
+                        <div className={cn('w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold border-2', u.onlineStatus ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'border-gray-200 bg-gray-50 text-gray-400')}>{(u.username || '?').charAt(0).toUpperCase()}</div>
+                        {u.onlineStatus && <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white" />}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="p-4 border-b border-black/5 flex items-center gap-2 bg-gray-50/50"><MessageSquare className="w-5 h-5 text-gray-400" /><h2 className="font-bold">Team Chat</h2></div>
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {messages.map((m, i) => (
+                    <div key={m._id || i} className={cn('flex flex-col', m.senderId === user.id ? 'items-end' : 'items-start')}>
+                      <div className="flex items-center gap-2 mb-1 px-1"><span className="text-[10px] font-bold text-gray-500 uppercase">{m.senderName}</span><span className="text-[10px] text-gray-300 flex items-center gap-1"><Clock className="w-2.5 h-2.5" />{format(new Date(m.timestamp), 'HH:mm')}</span></div>
+                      <div className={cn('px-4 py-2.5 rounded-2xl text-sm max-w-[90%]', m.senderId === user.id ? `${t.primary} text-white rounded-tr-none` : 'bg-gray-100 text-gray-800 rounded-tl-none border border-black/5')}>{m.message}</div>
+                    </div>
+                  ))}
+                  <div ref={chatEndRef} />
+                </div>
+                <form onSubmit={sendMessage} className="p-4 border-t border-black/5 bg-gray-50">
+                  <div className="relative">
+                    <input type="text" placeholder="Type a message..." value={newMessage} onChange={(e) => setNewMessage(e.target.value)} className="w-full pl-4 pr-12 py-3 bg-white rounded-xl border border-gray-200 outline-none text-sm" />
+                    <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-gray-400 hover:text-black"><Send className="w-4 h-4" /></button>
+                  </div>
+                </form>
+              </aside>
+            </>
+          )}
         </motion.main>
-      )}
       </AnimatePresence>
     </div>
   );
 }
+
+
