@@ -385,8 +385,16 @@ export default function App() {
         </div>
       </header>
 
+      <AnimatePresence mode="wait">
       {activeView === 'profile' && (
-        <main className="flex-1 overflow-y-auto p-8">
+        <motion.main
+          key="profile"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -10, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1 overflow-y-auto p-8"
+        >
           <div className="max-w-4xl mx-auto space-y-6">
             <section className="bg-white rounded-2xl border border-black/5 p-6">
               <h2 className="text-2xl font-bold mb-4">Profile</h2>
@@ -401,11 +409,18 @@ export default function App() {
               <div className="bg-amber-50 rounded-2xl border border-amber-200 p-5"><p className="text-xs text-amber-700 uppercase font-bold">Pending</p><p className="text-3xl font-bold text-amber-800">{tasks.length - completed}</p></div>
             </section>
           </div>
-        </main>
+        </motion.main>
       )}
 
       {activeView === 'settings' && (
-        <main className="flex-1 overflow-y-auto p-8">
+        <motion.main
+          key="settings"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -10, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1 overflow-y-auto p-8"
+        >
           <div className="max-w-4xl mx-auto bg-white rounded-2xl border border-black/5 p-6">
             <h2 className="text-2xl font-bold mb-1">Settings</h2>
             <p className="text-sm text-gray-500 mb-6">Choose a theme for your dashboard.</p>
@@ -435,11 +450,18 @@ export default function App() {
               </button>
             </div>
           </div>
-        </main>
+        </motion.main>
       )}
 
       {activeView === 'dashboard' && (
-        <main className="flex-1 flex overflow-hidden">
+        <motion.main
+          key="dashboard"
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -10, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="flex-1 flex overflow-hidden"
+        >
           <section className="flex-1 overflow-y-auto p-8 border-r border-black/5">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-center justify-between mb-8">
@@ -527,8 +549,9 @@ export default function App() {
               </div>
             </form>
           </aside>
-        </main>
+        </motion.main>
       )}
+      </AnimatePresence>
     </div>
   );
 }
