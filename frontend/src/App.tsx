@@ -319,9 +319,61 @@ export default function App() {
         )}
       >
         <div className="p-5 flex items-start gap-4">
-          <button onClick={() => isOwner && toggleTask(task._id)} disabled={!isOwner} className={cn('mt-1', isCompleted ? 'text-emerald-600' : isOverdue ? 'text-red-500' : isNearDeadline ? 'text-orange-500' : isOwner ? 'text-gray-400 hover:text-black' : 'text-gray-200 cursor-not-allowed')}>
-            {isCompleted ? <CheckCircle2 className="w-6 h-6 text-emerald-500" /> : <Circle className="w-6 h-6" />}
-          </button>
+                    <motion.button
+            type="button"
+            onClick={() => isOwner && toggleTask(task._id)}
+            disabled={!isOwner}
+            initial={false}
+            animate={{
+              backgroundColor: isCompleted ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,1)',
+              borderColor: isCompleted
+                ? 'rgba(16,185,129,0.55)'
+                : isOverdue
+                  ? 'rgba(239,68,68,0.45)'
+                  : isNearDeadline
+                    ? 'rgba(249,115,22,0.45)'
+                    : 'rgba(209,213,219,0.9)',
+              scale: isCompleted ? 1.05 : 1,
+            }}
+            whileTap={isOwner ? { scale: 0.92 } : undefined}
+            transition={{ type: 'spring', stiffness: 360, damping: 24 }}
+            className={cn(
+              'mt-1 h-7 w-7 rounded-md border flex items-center justify-center',
+              !isOwner && 'cursor-not-allowed opacity-70'
+            )}
+            aria-label={isCompleted ? 'Mark task as incomplete' : 'Mark task as complete'}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              {isCompleted ? (
+                <motion.span
+                  key="task-complete"
+                  initial={{ scale: 0.3, rotate: -70, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0.4, rotate: 70, opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="inline-flex"
+                >
+                  <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                </motion.span>
+              ) : (
+                <motion.span
+                  key="task-open"
+                  initial={{ scale: 0.3, rotate: 70, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  exit={{ scale: 0.4, rotate: -70, opacity: 0 }}
+                  transition={{ duration: 0.18 }}
+                  className="inline-flex"
+                >
+                  <Circle
+                    className={cn(
+                      'w-5 h-5',
+                      isOverdue ? 'text-red-500' : isNearDeadline ? 'text-orange-500' : 'text-gray-400'
+                    )}
+                  />
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
           <div className="flex-1">
             <div className="flex items-center justify-between mb-1">
               <h3 className={cn('text-lg font-bold', isCompleted ? 'line-through text-emerald-700' : isOverdue ? 'text-red-700' : isNearDeadline ? 'text-orange-700' : 'text-gray-900')}>{task.title}</h3>
